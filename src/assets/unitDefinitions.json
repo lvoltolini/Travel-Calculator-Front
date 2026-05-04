@@ -1,0 +1,62 @@
+{
+  "distance": 
+  {
+    "base": "mm",
+    "factors": 
+	{
+	"nm": 0.000001,
+	"um": 0.001,
+	"mm": 1,
+	"cm": 10,
+	"m": 1000,
+	"km": 1000000,
+	"inch": 25.4,
+	"foot": 304.8,
+	"yard": 914.4,
+	"mile": 1609344,
+	"nautical_mile": 1852000,
+	"light_second": 299792458000,
+	"au": 149597870700000,
+	"light_year": 9460730472580800000,
+	"parsec": 30856775814913700000
+    }
+  },
+  "time": 
+  {
+    "base": "ns",
+    "factors": 
+	{
+      "ns": 1,
+      "us": 1000,
+      "ms": 1000000,
+      "s": 1000000000,
+      "min": 60000000000,
+      "hour": 3600000000000,
+      "day": 86400000000000	  ,
+      "week": 604800000000000,
+      "month_30": 2592000000000000,
+      "month_31": 2678400000000000,
+      "90_days": 7776000000000000,
+      "180_days": 15552000000000000,
+      "year_365": 31536000000000000,
+      "year_leap": 31622400000000000
+    }
+  },
+  "angle": 
+  {
+    "base": "deg",
+    "factors": 
+	{
+      "deg": 1,
+      "rad": 57.295779513,
+      "grad": 0.9,
+      "arcmin": 0.0166666667,
+      "arcsec": 0.0002777778
+    }
+  },
+  "temperature": 
+  {
+    "note": "Requires formula-based conversion due to offsets",
+    "units": ["celsius", "fahrenheit", "kelvin"]
+  }
+}
