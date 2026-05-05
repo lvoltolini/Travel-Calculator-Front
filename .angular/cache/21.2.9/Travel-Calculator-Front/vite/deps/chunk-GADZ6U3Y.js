@@ -29,6 +29,26 @@ var __objRest = (source, exclude) => {
     }
   return target;
 };
+var __async = (__this, __arguments, generator) => {
+  return new Promise((resolve, reject) => {
+    var fulfilled = (value) => {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var rejected = (value) => {
+      try {
+        step(generator.throw(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+    step((generator = generator.apply(__this, __arguments)).next());
+  });
+};
 
 // node_modules/@angular/core/fesm2022/_effect-chunk.mjs
 var activeConsumer = null;
@@ -1074,13 +1094,6 @@ function identity(x) {
 }
 
 // node_modules/rxjs/dist/esm5/internal/util/pipe.js
-function pipe() {
-  var fns = [];
-  for (var _i = 0; _i < arguments.length; _i++) {
-    fns[_i] = arguments[_i];
-  }
-  return pipeFromArray(fns);
-}
 function pipeFromArray(fns) {
   if (fns.length === 0) {
     return identity;
@@ -2739,11 +2752,6 @@ function observeNotification(notification, observer) {
   kind === "N" ? (_a = observer.next) === null || _a === void 0 ? void 0 : _a.call(observer, value) : kind === "E" ? (_b = observer.error) === null || _b === void 0 ? void 0 : _b.call(observer, error) : (_c = observer.complete) === null || _c === void 0 ? void 0 : _c.call(observer);
 }
 
-// node_modules/rxjs/dist/esm5/internal/util/isObservable.js
-function isObservable(obj) {
-  return !!obj && (obj instanceof Observable || isFunction(obj.lift) && isFunction(obj.subscribe));
-}
-
 // node_modules/rxjs/dist/esm5/internal/util/EmptyError.js
 var EmptyError = createErrorClass(function(_super) {
   return function EmptyErrorImpl() {
@@ -2848,67 +2856,6 @@ function createObject(keys, values) {
   }, {});
 }
 
-// node_modules/rxjs/dist/esm5/internal/observable/combineLatest.js
-function combineLatest() {
-  var args = [];
-  for (var _i = 0; _i < arguments.length; _i++) {
-    args[_i] = arguments[_i];
-  }
-  var scheduler = popScheduler(args);
-  var resultSelector = popResultSelector(args);
-  var _a = argsArgArrayOrObject(args), observables = _a.args, keys = _a.keys;
-  if (observables.length === 0) {
-    return from([], scheduler);
-  }
-  var result = new Observable(combineLatestInit(observables, scheduler, keys ? function(values) {
-    return createObject(keys, values);
-  } : identity));
-  return resultSelector ? result.pipe(mapOneOrManyArgs(resultSelector)) : result;
-}
-function combineLatestInit(observables, scheduler, valueTransform) {
-  if (valueTransform === void 0) {
-    valueTransform = identity;
-  }
-  return function(subscriber) {
-    maybeSchedule(scheduler, function() {
-      var length = observables.length;
-      var values = new Array(length);
-      var active = length;
-      var remainingFirstValues = length;
-      var _loop_1 = function(i2) {
-        maybeSchedule(scheduler, function() {
-          var source = from(observables[i2], scheduler);
-          var hasFirstValue = false;
-          source.subscribe(createOperatorSubscriber(subscriber, function(value) {
-            values[i2] = value;
-            if (!hasFirstValue) {
-              hasFirstValue = true;
-              remainingFirstValues--;
-            }
-            if (!remainingFirstValues) {
-              subscriber.next(valueTransform(values.slice()));
-            }
-          }, function() {
-            if (!--active) {
-              subscriber.complete();
-            }
-          }));
-        }, subscriber);
-      };
-      for (var i = 0; i < length; i++) {
-        _loop_1(i);
-      }
-    }, subscriber);
-  };
-}
-function maybeSchedule(scheduler, execute, subscription) {
-  if (scheduler) {
-    executeSchedule(subscription, scheduler, execute);
-  } else {
-    execute();
-  }
-}
-
 // node_modules/rxjs/dist/esm5/internal/operators/mergeInternals.js
 function mergeInternals(source, subscriber, project, concurrent, onBeforeNext, expand2, innerSubScheduler, additionalFinalizer) {
   var buffer2 = [];
@@ -2988,35 +2935,6 @@ function mergeMap(project, resultSelector, concurrent) {
   });
 }
 
-// node_modules/rxjs/dist/esm5/internal/operators/mergeAll.js
-function mergeAll(concurrent) {
-  if (concurrent === void 0) {
-    concurrent = Infinity;
-  }
-  return mergeMap(identity, concurrent);
-}
-
-// node_modules/rxjs/dist/esm5/internal/operators/concatAll.js
-function concatAll() {
-  return mergeAll(1);
-}
-
-// node_modules/rxjs/dist/esm5/internal/observable/concat.js
-function concat() {
-  var args = [];
-  for (var _i = 0; _i < arguments.length; _i++) {
-    args[_i] = arguments[_i];
-  }
-  return concatAll()(from(args, popScheduler(args)));
-}
-
-// node_modules/rxjs/dist/esm5/internal/observable/defer.js
-function defer(observableFactory) {
-  return new Observable(function(subscriber) {
-    innerFrom(observableFactory()).subscribe(subscriber);
-  });
-}
-
 // node_modules/rxjs/dist/esm5/internal/observable/forkJoin.js
 function forkJoin() {
   var args = [];
@@ -3073,85 +2991,9 @@ function filter(predicate, thisArg) {
   });
 }
 
-// node_modules/rxjs/dist/esm5/internal/operators/catchError.js
-function catchError(selector) {
-  return operate(function(source, subscriber) {
-    var innerSub = null;
-    var syncUnsub = false;
-    var handledResult;
-    innerSub = source.subscribe(createOperatorSubscriber(subscriber, void 0, void 0, function(err) {
-      handledResult = innerFrom(selector(err, catchError(selector)(source)));
-      if (innerSub) {
-        innerSub.unsubscribe();
-        innerSub = null;
-        handledResult.subscribe(subscriber);
-      } else {
-        syncUnsub = true;
-      }
-    }));
-    if (syncUnsub) {
-      innerSub.unsubscribe();
-      innerSub = null;
-      handledResult.subscribe(subscriber);
-    }
-  });
-}
-
 // node_modules/rxjs/dist/esm5/internal/operators/concatMap.js
 function concatMap(project, resultSelector) {
   return isFunction(resultSelector) ? mergeMap(project, resultSelector, 1) : mergeMap(project, 1);
-}
-
-// node_modules/rxjs/dist/esm5/internal/operators/defaultIfEmpty.js
-function defaultIfEmpty(defaultValue) {
-  return operate(function(source, subscriber) {
-    var hasValue = false;
-    source.subscribe(createOperatorSubscriber(subscriber, function(value) {
-      hasValue = true;
-      subscriber.next(value);
-    }, function() {
-      if (!hasValue) {
-        subscriber.next(defaultValue);
-      }
-      subscriber.complete();
-    }));
-  });
-}
-
-// node_modules/rxjs/dist/esm5/internal/operators/take.js
-function take(count2) {
-  return count2 <= 0 ? function() {
-    return EMPTY;
-  } : operate(function(source, subscriber) {
-    var seen = 0;
-    source.subscribe(createOperatorSubscriber(subscriber, function(value) {
-      if (++seen <= count2) {
-        subscriber.next(value);
-        if (count2 <= seen) {
-          subscriber.complete();
-        }
-      }
-    }));
-  });
-}
-
-// node_modules/rxjs/dist/esm5/internal/operators/throwIfEmpty.js
-function throwIfEmpty(errorFactory) {
-  if (errorFactory === void 0) {
-    errorFactory = defaultErrorFactory;
-  }
-  return operate(function(source, subscriber) {
-    var hasValue = false;
-    source.subscribe(createOperatorSubscriber(subscriber, function(value) {
-      hasValue = true;
-      subscriber.next(value);
-    }, function() {
-      return hasValue ? subscriber.complete() : subscriber.error(errorFactory());
-    }));
-  });
-}
-function defaultErrorFactory() {
-  return new EmptyError();
 }
 
 // node_modules/rxjs/dist/esm5/internal/operators/finalize.js
@@ -3162,62 +3004,6 @@ function finalize(callback) {
     } finally {
       subscriber.add(callback);
     }
-  });
-}
-
-// node_modules/rxjs/dist/esm5/internal/operators/first.js
-function first(predicate, defaultValue) {
-  var hasDefaultValue = arguments.length >= 2;
-  return function(source) {
-    return source.pipe(predicate ? filter(function(v, i) {
-      return predicate(v, i, source);
-    }) : identity, take(1), hasDefaultValue ? defaultIfEmpty(defaultValue) : throwIfEmpty(function() {
-      return new EmptyError();
-    }));
-  };
-}
-
-// node_modules/rxjs/dist/esm5/internal/operators/takeLast.js
-function takeLast(count2) {
-  return count2 <= 0 ? function() {
-    return EMPTY;
-  } : operate(function(source, subscriber) {
-    var buffer2 = [];
-    source.subscribe(createOperatorSubscriber(subscriber, function(value) {
-      buffer2.push(value);
-      count2 < buffer2.length && buffer2.shift();
-    }, function() {
-      var e_1, _a;
-      try {
-        for (var buffer_1 = __values(buffer2), buffer_1_1 = buffer_1.next(); !buffer_1_1.done; buffer_1_1 = buffer_1.next()) {
-          var value = buffer_1_1.value;
-          subscriber.next(value);
-        }
-      } catch (e_1_1) {
-        e_1 = { error: e_1_1 };
-      } finally {
-        try {
-          if (buffer_1_1 && !buffer_1_1.done && (_a = buffer_1.return)) _a.call(buffer_1);
-        } finally {
-          if (e_1) throw e_1.error;
-        }
-      }
-      subscriber.complete();
-    }, void 0, function() {
-      buffer2 = null;
-    }));
-  });
-}
-
-// node_modules/rxjs/dist/esm5/internal/operators/startWith.js
-function startWith() {
-  var values = [];
-  for (var _i = 0; _i < arguments.length; _i++) {
-    values[_i] = arguments[_i];
-  }
-  var scheduler = popScheduler(values);
-  return operate(function(source, subscriber) {
-    (scheduler ? concat(values, source, scheduler) : concat(values, source)).subscribe(subscriber);
   });
 }
 
@@ -3245,47 +3031,6 @@ function switchMap(project, resultSelector) {
       checkComplete();
     }));
   });
-}
-
-// node_modules/rxjs/dist/esm5/internal/operators/takeUntil.js
-function takeUntil(notifier) {
-  return operate(function(source, subscriber) {
-    innerFrom(notifier).subscribe(createOperatorSubscriber(subscriber, function() {
-      return subscriber.complete();
-    }, noop));
-    !subscriber.closed && source.subscribe(subscriber);
-  });
-}
-
-// node_modules/rxjs/dist/esm5/internal/operators/tap.js
-function tap(observerOrNext, error, complete) {
-  var tapObserver = isFunction(observerOrNext) || error || complete ? { next: observerOrNext, error, complete } : observerOrNext;
-  return tapObserver ? operate(function(source, subscriber) {
-    var _a;
-    (_a = tapObserver.subscribe) === null || _a === void 0 ? void 0 : _a.call(tapObserver);
-    var isUnsub = true;
-    source.subscribe(createOperatorSubscriber(subscriber, function(value) {
-      var _a2;
-      (_a2 = tapObserver.next) === null || _a2 === void 0 ? void 0 : _a2.call(tapObserver, value);
-      subscriber.next(value);
-    }, function() {
-      var _a2;
-      isUnsub = false;
-      (_a2 = tapObserver.complete) === null || _a2 === void 0 ? void 0 : _a2.call(tapObserver);
-      subscriber.complete();
-    }, function(err) {
-      var _a2;
-      isUnsub = false;
-      (_a2 = tapObserver.error) === null || _a2 === void 0 ? void 0 : _a2.call(tapObserver, err);
-      subscriber.error(err);
-    }, function() {
-      var _a2, _b;
-      if (isUnsub) {
-        (_a2 = tapObserver.unsubscribe) === null || _a2 === void 0 ? void 0 : _a2.call(tapObserver);
-      }
-      (_b = tapObserver.finalize) === null || _b === void 0 ? void 0 : _b.call(tapObserver);
-    }));
-  }) : identity;
 }
 
 // node_modules/@angular/core/fesm2022/_not_found-chunk.mjs
@@ -3426,7 +3171,7 @@ var formatter = {
     if (!isSignal(sig)) return false;
     try {
       sig();
-    } catch {
+    } catch (e) {
       return false;
     }
     return !config2?.ngSkipFormatting;
@@ -5785,7 +5530,7 @@ function scheduleCallbackWithRafRace(callback) {
       if (timeoutId !== void 0) {
         clearTimeout(timeoutId);
       }
-    } catch {
+    } catch (e) {
     }
   }
   timeoutId = setTimeout(() => {
@@ -9272,7 +9017,7 @@ function getPolicy$1() {
           createScript: (s) => s,
           createScriptURL: (s) => s
         });
-      } catch {
+      } catch (e) {
       }
     }
   }
@@ -9295,7 +9040,7 @@ function getPolicy() {
           createScript: (s) => s,
           createScriptURL: (s) => s
         });
-      } catch {
+      } catch (e) {
       }
     }
   }
@@ -9391,7 +9136,7 @@ var DOMParserHelper = class {
       }
       body.firstChild?.remove();
       return body;
-    } catch {
+    } catch (e) {
       return null;
     }
   }
@@ -9412,7 +9157,7 @@ var InertDocumentHelper = class {
 function isDOMParserAvailable() {
   try {
     return !!new window.DOMParser().parseFromString(trustedHTMLFromString(""), "text/html");
-  } catch {
+  } catch (e) {
     return false;
   }
 }
@@ -11738,7 +11483,7 @@ function handleUncaughtError(lView, error) {
   let errorHandler;
   try {
     errorHandler = injector.get(INTERNAL_APPLICATION_ERROR_HANDLER, null);
-  } catch {
+  } catch (e) {
     errorHandler = null;
   }
   errorHandler?.(error);
@@ -12480,7 +12225,7 @@ var ViewRef = class {
     if (ngDevMode) {
       try {
         this.exhaustive ??= this._lView[INJECTOR].get(UseExhaustiveCheckNoChanges, USE_EXHAUSTIVE_CHECK_NO_CHANGES_DEFAULT);
-      } catch {
+      } catch (e) {
         this.exhaustive = USE_EXHAUSTIVE_CHECK_NO_CHANGES_DEFAULT;
       }
       checkNoChangesInternal(this._lView, this.exhaustive);
@@ -15882,50 +15627,52 @@ function refreshSignalQuery(node, firstOnly) {
 }
 var componentResourceResolutionQueue = /* @__PURE__ */ new Map();
 var componentDefPendingResolution = /* @__PURE__ */ new Set();
-async function resolveComponentResources(resourceResolver) {
-  const currentQueue = componentResourceResolutionQueue;
-  componentResourceResolutionQueue = /* @__PURE__ */ new Map();
-  const urlCache = /* @__PURE__ */ new Map();
-  function cachedResourceResolve(url) {
-    const promiseCached = urlCache.get(url);
-    if (promiseCached) {
-      return promiseCached;
+function resolveComponentResources(resourceResolver) {
+  return __async(this, null, function* () {
+    const currentQueue = componentResourceResolutionQueue;
+    componentResourceResolutionQueue = /* @__PURE__ */ new Map();
+    const urlCache = /* @__PURE__ */ new Map();
+    function cachedResourceResolve(url) {
+      const promiseCached = urlCache.get(url);
+      if (promiseCached) {
+        return promiseCached;
+      }
+      const promise = resourceResolver(url).then((response) => unwrapResponse(url, response));
+      urlCache.set(url, promise);
+      return promise;
     }
-    const promise = resourceResolver(url).then((response) => unwrapResponse(url, response));
-    urlCache.set(url, promise);
-    return promise;
-  }
-  const resolutionPromises = Array.from(currentQueue).map(async ([type, component]) => {
-    if (component.styleUrl && component.styleUrls?.length) {
-      throw new Error("@Component cannot define both `styleUrl` and `styleUrls`. Use `styleUrl` if the component has one stylesheet, or `styleUrls` if it has multiple");
-    }
-    const componentTasks = [];
-    if (component.templateUrl) {
-      componentTasks.push(cachedResourceResolve(component.templateUrl).then((template) => {
-        component.template = template;
-      }));
-    }
-    const styles = typeof component.styles === "string" ? [component.styles] : component.styles ?? [];
-    component.styles = styles;
-    let {
-      styleUrl,
-      styleUrls
-    } = component;
-    if (styleUrl) {
-      styleUrls = [styleUrl];
-      component.styleUrl = void 0;
-    }
-    if (styleUrls?.length) {
-      const allFetched = Promise.all(styleUrls.map((url) => cachedResourceResolve(url))).then((fetchedStyles) => {
-        styles.push(...fetchedStyles);
-        component.styleUrls = void 0;
-      });
-      componentTasks.push(allFetched);
-    }
-    await Promise.all(componentTasks);
-    componentDefPendingResolution.delete(type);
+    const resolutionPromises = Array.from(currentQueue).map((_0) => __async(null, [_0], function* ([type, component]) {
+      if (component.styleUrl && component.styleUrls?.length) {
+        throw new Error("@Component cannot define both `styleUrl` and `styleUrls`. Use `styleUrl` if the component has one stylesheet, or `styleUrls` if it has multiple");
+      }
+      const componentTasks = [];
+      if (component.templateUrl) {
+        componentTasks.push(cachedResourceResolve(component.templateUrl).then((template) => {
+          component.template = template;
+        }));
+      }
+      const styles = typeof component.styles === "string" ? [component.styles] : component.styles ?? [];
+      component.styles = styles;
+      let {
+        styleUrl,
+        styleUrls
+      } = component;
+      if (styleUrl) {
+        styleUrls = [styleUrl];
+        component.styleUrl = void 0;
+      }
+      if (styleUrls?.length) {
+        const allFetched = Promise.all(styleUrls.map((url) => cachedResourceResolve(url))).then((fetchedStyles) => {
+          styles.push(...fetchedStyles);
+          component.styleUrls = void 0;
+        });
+        componentTasks.push(allFetched);
+      }
+      yield Promise.all(componentTasks);
+      componentDefPendingResolution.delete(type);
+    }));
+    yield Promise.all(resolutionPromises);
   });
-  await Promise.all(resolutionPromises);
 }
 function maybeQueueResolutionOfComponentResources(type, metadata) {
   if (componentNeedsResolution(metadata)) {
@@ -15954,14 +15701,16 @@ function restoreComponentResolutionQueue(queue2) {
 function isComponentResourceResolutionQueueEmpty() {
   return componentResourceResolutionQueue.size === 0;
 }
-async function unwrapResponse(url, response) {
-  if (typeof response === "string") {
-    return response;
-  }
-  if (response.status !== void 0 && response.status !== 200) {
-    throw new RuntimeError(918, ngDevMode && `Could not load resource: ${url}. Response status: ${response.status}`);
-  }
-  return response.text();
+function unwrapResponse(url, response) {
+  return __async(this, null, function* () {
+    if (typeof response === "string") {
+      return response;
+    }
+    if (response.status !== void 0 && response.status !== 200) {
+      throw new RuntimeError(918, ngDevMode && `Could not load resource: ${url}. Response status: ${response.status}`);
+    }
+    return response.text();
+  });
 }
 var modules = /* @__PURE__ */ new Map();
 var checkForDuplicateNgModules = true;
@@ -19020,61 +18769,67 @@ function triggerDeferBlock(triggerType, lView, tNode) {
       }
   }
 }
-async function triggerHydrationFromBlockName(injector, blockName, replayQueuedEventsFn) {
-  const dehydratedBlockRegistry = injector.get(DEHYDRATED_BLOCK_REGISTRY);
-  const blocksBeingHydrated = dehydratedBlockRegistry.hydrating;
-  if (blocksBeingHydrated.has(blockName)) {
-    return;
-  }
-  const {
-    parentBlockPromise,
-    hydrationQueue
-  } = getParentBlockHydrationQueue(blockName, injector);
-  if (hydrationQueue.length === 0) return;
-  if (parentBlockPromise !== null) {
-    hydrationQueue.shift();
-  }
-  populateHydratingStateForQueue(dehydratedBlockRegistry, hydrationQueue);
-  if (parentBlockPromise !== null) {
-    await parentBlockPromise;
-  }
-  const topmostParentBlock = hydrationQueue[0];
-  if (dehydratedBlockRegistry.has(topmostParentBlock)) {
-    await triggerHydrationForBlockQueue(injector, hydrationQueue, replayQueuedEventsFn);
-  } else {
-    dehydratedBlockRegistry.awaitParentBlock(topmostParentBlock, async () => await triggerHydrationForBlockQueue(injector, hydrationQueue, replayQueuedEventsFn));
-  }
+function triggerHydrationFromBlockName(injector, blockName, replayQueuedEventsFn) {
+  return __async(this, null, function* () {
+    const dehydratedBlockRegistry = injector.get(DEHYDRATED_BLOCK_REGISTRY);
+    const blocksBeingHydrated = dehydratedBlockRegistry.hydrating;
+    if (blocksBeingHydrated.has(blockName)) {
+      return;
+    }
+    const {
+      parentBlockPromise,
+      hydrationQueue
+    } = getParentBlockHydrationQueue(blockName, injector);
+    if (hydrationQueue.length === 0) return;
+    if (parentBlockPromise !== null) {
+      hydrationQueue.shift();
+    }
+    populateHydratingStateForQueue(dehydratedBlockRegistry, hydrationQueue);
+    if (parentBlockPromise !== null) {
+      yield parentBlockPromise;
+    }
+    const topmostParentBlock = hydrationQueue[0];
+    if (dehydratedBlockRegistry.has(topmostParentBlock)) {
+      yield triggerHydrationForBlockQueue(injector, hydrationQueue, replayQueuedEventsFn);
+    } else {
+      dehydratedBlockRegistry.awaitParentBlock(topmostParentBlock, () => __async(null, null, function* () {
+        return yield triggerHydrationForBlockQueue(injector, hydrationQueue, replayQueuedEventsFn);
+      }));
+    }
+  });
 }
-async function triggerHydrationForBlockQueue(injector, hydrationQueue, replayQueuedEventsFn) {
-  const dehydratedBlockRegistry = injector.get(DEHYDRATED_BLOCK_REGISTRY);
-  const blocksBeingHydrated = dehydratedBlockRegistry.hydrating;
-  const pendingTasks = injector.get(PendingTasksInternal);
-  const taskId = pendingTasks.add();
-  for (let blockQueueIdx = 0; blockQueueIdx < hydrationQueue.length; blockQueueIdx++) {
-    const dehydratedBlockId = hydrationQueue[blockQueueIdx];
-    const dehydratedDeferBlock = dehydratedBlockRegistry.get(dehydratedBlockId);
-    if (dehydratedDeferBlock != null) {
-      await triggerResourceLoadingForHydration(dehydratedDeferBlock);
-      await nextRender(injector);
-      if (deferBlockHasErrored(dehydratedDeferBlock)) {
-        removeDehydratedViewList(dehydratedDeferBlock);
+function triggerHydrationForBlockQueue(injector, hydrationQueue, replayQueuedEventsFn) {
+  return __async(this, null, function* () {
+    const dehydratedBlockRegistry = injector.get(DEHYDRATED_BLOCK_REGISTRY);
+    const blocksBeingHydrated = dehydratedBlockRegistry.hydrating;
+    const pendingTasks = injector.get(PendingTasksInternal);
+    const taskId = pendingTasks.add();
+    for (let blockQueueIdx = 0; blockQueueIdx < hydrationQueue.length; blockQueueIdx++) {
+      const dehydratedBlockId = hydrationQueue[blockQueueIdx];
+      const dehydratedDeferBlock = dehydratedBlockRegistry.get(dehydratedBlockId);
+      if (dehydratedDeferBlock != null) {
+        yield triggerResourceLoadingForHydration(dehydratedDeferBlock);
+        yield nextRender(injector);
+        if (deferBlockHasErrored(dehydratedDeferBlock)) {
+          removeDehydratedViewList(dehydratedDeferBlock);
+          cleanupRemainingHydrationQueue(hydrationQueue.slice(blockQueueIdx), dehydratedBlockRegistry);
+          break;
+        }
+        blocksBeingHydrated.get(dehydratedBlockId).resolve();
+      } else {
+        cleanupParentContainer(blockQueueIdx, hydrationQueue, dehydratedBlockRegistry);
         cleanupRemainingHydrationQueue(hydrationQueue.slice(blockQueueIdx), dehydratedBlockRegistry);
         break;
       }
-      blocksBeingHydrated.get(dehydratedBlockId).resolve();
-    } else {
-      cleanupParentContainer(blockQueueIdx, hydrationQueue, dehydratedBlockRegistry);
-      cleanupRemainingHydrationQueue(hydrationQueue.slice(blockQueueIdx), dehydratedBlockRegistry);
-      break;
     }
-  }
-  const lastBlockName = hydrationQueue[hydrationQueue.length - 1];
-  await blocksBeingHydrated.get(lastBlockName)?.promise;
-  pendingTasks.remove(taskId);
-  if (replayQueuedEventsFn) {
-    replayQueuedEventsFn(hydrationQueue);
-  }
-  cleanupHydratedDeferBlocks(dehydratedBlockRegistry.get(lastBlockName), hydrationQueue, dehydratedBlockRegistry, injector.get(ApplicationRef));
+    const lastBlockName = hydrationQueue[hydrationQueue.length - 1];
+    yield blocksBeingHydrated.get(lastBlockName)?.promise;
+    pendingTasks.remove(taskId);
+    if (replayQueuedEventsFn) {
+      replayQueuedEventsFn(hydrationQueue);
+    }
+    cleanupHydratedDeferBlocks(dehydratedBlockRegistry.get(lastBlockName), hydrationQueue, dehydratedBlockRegistry, injector.get(ApplicationRef));
+  });
 }
 function deferBlockHasErrored(deferBlock) {
   return getLDeferBlockDetails(deferBlock.lView, deferBlock.tNode)[DEFER_BLOCK_STATE] === DeferBlockState.Error;
@@ -19103,15 +18858,17 @@ function nextRender(injector) {
     injector
   }));
 }
-async function triggerResourceLoadingForHydration(dehydratedBlock) {
-  const {
-    tNode,
-    lView
-  } = dehydratedBlock;
-  const lDetails = getLDeferBlockDetails(lView, tNode);
-  return new Promise((resolve) => {
-    onDeferBlockCompletion(lDetails, resolve);
-    triggerDeferBlock(2, lView, tNode);
+function triggerResourceLoadingForHydration(dehydratedBlock) {
+  return __async(this, null, function* () {
+    const {
+      tNode,
+      lView
+    } = dehydratedBlock;
+    const lDetails = getLDeferBlockDetails(lView, tNode);
+    return new Promise((resolve) => {
+      onDeferBlockCompletion(lDetails, resolve);
+      triggerDeferBlock(2, lView, tNode);
+    });
   });
 }
 function onDeferBlockCompletion(lDetails, callback) {
@@ -25159,57 +24916,59 @@ var ResourceImpl = class extends BaseWritableResource {
       stream: void 0
     });
   }
-  async loadEffect() {
-    const extRequest = this.extRequest();
-    const {
-      status: currentStatus,
-      previousStatus
-    } = untracked2(this.state);
-    if (extRequest.request === void 0) {
-      return;
-    } else if (currentStatus !== "loading") {
-      return;
-    }
-    this.abortInProgressLoad();
-    let resolvePendingTask = this.resolvePendingTask = this.pendingTasks.add();
-    const {
-      signal: abortSignal
-    } = this.pendingController = new AbortController();
-    try {
-      const stream = await untracked2(() => {
-        return this.loaderFn({
-          params: extRequest.request,
-          abortSignal,
-          previous: {
-            status: previousStatus
-          }
+  loadEffect() {
+    return __async(this, null, function* () {
+      const extRequest = this.extRequest();
+      const {
+        status: currentStatus,
+        previousStatus
+      } = untracked2(this.state);
+      if (extRequest.request === void 0) {
+        return;
+      } else if (currentStatus !== "loading") {
+        return;
+      }
+      this.abortInProgressLoad();
+      let resolvePendingTask = this.resolvePendingTask = this.pendingTasks.add();
+      const {
+        signal: abortSignal
+      } = this.pendingController = new AbortController();
+      try {
+        const stream = yield untracked2(() => {
+          return this.loaderFn({
+            params: extRequest.request,
+            abortSignal,
+            previous: {
+              status: previousStatus
+            }
+          });
         });
-      });
-      if (abortSignal.aborted || untracked2(this.extRequest) !== extRequest) {
-        return;
+        if (abortSignal.aborted || untracked2(this.extRequest) !== extRequest) {
+          return;
+        }
+        this.state.set({
+          extRequest,
+          status: "resolved",
+          previousStatus: "resolved",
+          stream
+        });
+      } catch (err) {
+        if (abortSignal.aborted || untracked2(this.extRequest) !== extRequest) {
+          return;
+        }
+        this.state.set({
+          extRequest,
+          status: "resolved",
+          previousStatus: "error",
+          stream: signal({
+            error: encapsulateResourceError(err)
+          }, ngDevMode ? createDebugNameObject(this.debugName, "stream") : void 0)
+        });
+      } finally {
+        resolvePendingTask?.();
+        resolvePendingTask = void 0;
       }
-      this.state.set({
-        extRequest,
-        status: "resolved",
-        previousStatus: "resolved",
-        stream
-      });
-    } catch (err) {
-      if (abortSignal.aborted || untracked2(this.extRequest) !== extRequest) {
-        return;
-      }
-      this.state.set({
-        extRequest,
-        status: "resolved",
-        previousStatus: "error",
-        stream: signal({
-          error: encapsulateResourceError(err)
-        }, ngDevMode ? createDebugNameObject(this.debugName, "stream") : void 0)
-      });
-    } finally {
-      resolvePendingTask?.();
-      resolvePendingTask = void 0;
-    }
+    });
   }
   abortInProgressLoad() {
     untracked2(() => this.pendingController?.abort());
@@ -25225,17 +24984,17 @@ function getLoader(options) {
   if (isStreamingResourceOptions(options)) {
     return options.stream;
   }
-  return async (params) => {
+  return (params) => __async(null, null, function* () {
     try {
       return signal({
-        value: await options.loader(params)
+        value: yield options.loader(params)
       }, ngDevMode ? createDebugNameObject(options.debugName, "stream") : void 0);
     } catch (err) {
       return signal({
         error: encapsulateResourceError(err)
       }, ngDevMode ? createDebugNameObject(options.debugName, "stream") : void 0);
     }
-  };
+  });
 }
 function isStreamingResourceOptions(options) {
   return !!options.stream;
@@ -28825,36 +28584,18 @@ export {
   __spreadValues,
   __spreadProps,
   __objRest,
+  __async,
   SIGNAL,
-  Subscription,
-  pipe,
   Observable,
   Subject,
-  BehaviorSubject,
-  EMPTY,
   from,
   of,
-  throwError,
-  isObservable,
-  EmptyError,
   map,
-  combineLatest,
-  mergeMap,
-  mergeAll,
-  concat,
-  defer,
   forkJoin,
   filter,
-  catchError,
   concatMap,
-  take,
   finalize,
-  first,
-  takeLast,
-  startWith,
   switchMap,
-  takeUntil,
-  tap,
   setCurrentInjector,
   setAlternateWeakRefImpl,
   Version,
@@ -29358,4 +29099,4 @@ export {
   RESPONSE_INIT,
   REQUEST_CONTEXT
 };
-//# sourceMappingURL=chunk-X22CRM32.js.map
+//# sourceMappingURL=chunk-GADZ6U3Y.js.map

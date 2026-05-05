@@ -1,34 +1,41 @@
-<div class="converter-card">
-  <h3>Unit Converter</h3>
-
-  <div class="input-group">
-    <label>Category</label>
-    <select [(ngModel)]="selectedCategory" (change)="updateUnits()" title="Select Category">
+<div class="p-2">
+  <!-- Category Selector -->
+  <div class="form-floating mb-4">
+    <select class="form-select" id="catSelect" [(ngModel)]="selectedCategory" (change)="updateUnits()">
       <option *ngFor="let cat of categories" [value]="cat">{{ cat | titlecase }}</option>
     </select>
+    <label for="catSelect">Measurement Category</label>
   </div>
 
-  <div class="conversion-grid">
-    <div class="column">
-    <input type="number" [(ngModel)]="inputValue" title="Input Value" (input)="convert()">      
-    <select [(ngModel)]="fromUnit" (change)="convert()" title="From Unit">
+  <div class="row g-2 align-items-center mb-4">
+    <div class="col">
+      <div class="form-floating">
+        <input type="number" class="form-control" id="valFrom" [(ngModel)]="inputValue" (input)="convert()">
+        <label for="valFrom">From</label>
+      </div>
+      <select title="From Unit" class="form-select mt-1 form-select-sm" [(ngModel)]="fromUnit" (change)="convert()">
         <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
       </select>
     </div>
 
-    <div class="swap-icon"> ➡️ </div>
+    <div class="col-auto text-primary fs-4">
+      <i class="bi bi-arrow-right-circle-fill"></i>
+    </div>
 
-    <div class="column">
-      <div class="result-display">{{ result }}</div>
-      <select [(ngModel)]="toUnit" (change)="convert()" title="To Unit">
+    <div class="col">
+      <div class="form-floating">
+        <div class="form-control bg-light border-primary fw-bold" id="valTo">{{ result }}</div>
+        <label for="valTo">To</label>
+      </div>
+      <select title="To Unit" class="form-select mt-1 form-select-sm" [(ngModel)]="toUnit" (change)="convert()">
         <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
       </select>
     </div>
   </div>
 
-  <div class="settings">
-    <label>Decimals: </label>
-    <input type="range" title="Output Value" min="0" max="10" [(ngModel)]="decimalLevel" (change)="convert()">
-    <span>{{ decimalLevel }}</span>
+  <!-- Settings -->
+  <div class="bg-light p-2 rounded">
+    <label class="form-label small text-muted mb-0">Decimals: {{ decimalLevel }}</label>
+    <input title="Decimal Places" type="range" class="form-range" min="0" max="10" [(ngModel)]="decimalLevel" (change)="convert()">
   </div>
 </div>

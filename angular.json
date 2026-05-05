@@ -41,7 +41,8 @@
             "src/styles.scss"
             ],
             "ssr": false,
-            "prerender": false
+            "prerender": false,
+            "polyfills": [ "zone.js" ]
           },
           "configurations": {
             "production": {

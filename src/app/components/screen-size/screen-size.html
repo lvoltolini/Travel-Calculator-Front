@@ -1,28 +1,39 @@
-<div class="converter-card">
-  <h3>Screen Size Calculator</h3>
-  
-  <div class="input-group">
-    <label>Diagonal</label>
-    <input type="number" [(ngModel)]="diag" title="Diagonal Value" aria-label="Diagonal Value">    
-    <select [(ngModel)]="diagInInches" title="Input Value" (change)="calculateXandY()">
-      <option [ngValue]="true">Inches (")</option>
-      <option [ngValue]="false">Centimeters (cm)</option>
-    </select>
-  </div>
-
-  <div class="input-group">
-    <label>Aspect Ratio (Width / Height)</label>
-    <input type="number" step="0.01" [(ngModel)]="disp" title="Aspect Ratio" (input)="calculateXandY()">
-    <small>e.g., 1.77 for 16:9, 1.33 for 4:3</small>
-  </div>
-
-  <hr>
-
-  <div class="results-panel" *ngIf="results.x > 0">
-    <div class="result-item">
-      <strong>Width (x):</strong> {{ results.x }} cm
+<div class="p-2">
+  <div class="row g-3">
+    <!-- Diagonal Input -->
+    <div class="col-md-8">
+      <div class="form-floating">
+        <input type="number" class="form-control" id="diagInput" [(ngModel)]="diag" (input)="calculateXandY()" placeholder="Value">
+        <label for="diagInput">Diagonal Value</label>
+      </div>
     </div>
-    <div class="result-item">
-      <strong>Height (y):</strong> {{ results.y }} cm
+    <div class="col-md-4">
+      <div class="form-floating">
+        <select class="form-select" id="unitSelect" [(ngModel)]="diagInInches" (change)="calculateXandY()">
+          <option [ngValue]="true">Inches (")</option>
+          <option [ngValue]="false">Centimeters (cm)</option>
+        </select>
+        <label for="unitSelect">Unit</label>
+      </div>
+    </div>
+
+    <!-- Aspect Ratio -->
+    <div class="col-12">
+      <div class="form-floating">
+        <input type="number" step="0.01" class="form-control" id="aspectInput" [(ngModel)]="disp" (input)="calculateXandY()" placeholder="1.77">
+        <label for="aspectInput">Aspect Ratio (e.g. 1.77 for 16:9)</label>
+      </div>
     </div>
   </div>
+
+  <div class="mt-4 p-3 bg-light rounded border border-primary-subtle" *ngIf="results.x > 0">
+    <div class="d-flex justify-content-between mb-2">
+      <span class="text-muted text-uppercase small">Width (x)</span>
+      <span class="fw-bold text-primary">{{ results.x }} cm</span>
+    </div>
+    <div class="d-flex justify-content-between">
+      <span class="text-muted text-uppercase small">Height (y)</span>
+      <span class="fw-bold text-primary">{{ results.y }} cm</span>
+    </div>
+  </div>
+</div>
