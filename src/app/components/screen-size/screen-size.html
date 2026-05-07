@@ -3,13 +3,13 @@
     <!-- Diagonal Input -->
     <div class="col-md-8">
       <div class="form-floating">
-        <input type="number" class="form-control" id="diagInput" [(ngModel)]="diag" (input)="calculateXandY()" placeholder="Value">
+        <input type="number" class="form-control" id="diagInput" [(ngModel)]="diag" (input)="calculateFromDiagDisp()" placeholder="Value">
         <label for="diagInput">Diagonal Value</label>
       </div>
     </div>
     <div class="col-md-4">
       <div class="form-floating">
-        <select class="form-select" id="unitSelect" [(ngModel)]="diagInInches" (change)="calculateXandY()">
+        <select class="form-select" id="unitSelect" [(ngModel)]="diagInInches" (change)="calculateFromDiagDisp()">
           <option [ngValue]="true">Inches (")</option>
           <option [ngValue]="false">Centimeters (cm)</option>
         </select>
@@ -20,7 +20,7 @@
     <!-- Aspect Ratio -->
     <div class="col-12">
       <div class="form-floating">
-        <input type="number" step="0.01" class="form-control" id="aspectInput" [(ngModel)]="disp" (input)="calculateXandY()" placeholder="1.77">
+        <input type="number" step="0.01" class="form-control" id="aspectInput" [(ngModel)]="disp" (input)="calculateFromDiagDisp()" placeholder="1.77">
         <label for="aspectInput">Aspect Ratio (e.g. 1.77 for 16:9)</label>
       </div>
     </div>
