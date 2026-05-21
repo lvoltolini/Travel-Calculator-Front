@@ -1,10 +1,68 @@
-<div class="container">
-  <h1>Travel Calculator Hub</h1>
-  
-  <div class="calculator-layout">
-    <!-- These are the selectors from your components -->
-    <app-unit-converter></app-unit-converter>
-    <hr>
-    <app-screen-size></app-screen-size>
+<div class="container-fluid mt-4">
+  <header class="text-center mb-5">
+    <h1 class="display-4 text-primary">Traveling Tools</h1>
+    <p class="lead text-muted">~Precision tools for the modern traveler~</p>
+  </header>
+
+  <div class="row align-items-stretch"> <!-- Added stretch -->
+    <!-- Left Column -->
+    <aside class="col-md-3 d-flex flex-column">
+      <div class="list-group shadow-sm h-100 bg-white">
+        <!-- Navigation Buttons -->
+        <button class="list-group-item list-group-item-action border-0 py-3" (click)="scrollTo('screen')">
+          <i class="bi bi-display me-2"></i> Screen Size
+        </button>
+        <button class="list-group-item list-group-item-action border-0 py-3" (click)="scrollTo('unit')">
+          <i class="bi bi-rulers me-2"></i> Unit Converter
+        </button>
+      </div>
+    </aside>
+
+    <!-- Middle Column: Multi-Accordion -->
+    <main class="col-md-6">
+      <div class="accordion shadow h-100" id="calculatorAccordion">
+        
+        <!-- Screen Size Section -->
+        <div class="accordion-item border-0">
+          <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseScreen">
+              Screen Size Calculator
+            </button>
+          </h2>
+          <div id="collapseScreen" class="accordion-collapse collapse show" data-bs-parent="#calculatorAccordion">
+            <div class="accordion-body bg-white">
+              <app-screen-size></app-screen-size>
+            </div>
+          </div>
+        </div>
+
+        <!-- Unit Converter Section -->
+        <div class="accordion-item border-0">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUnit">
+              Unit Converter
+            </button>
+          </h2>
+          <div id="collapseUnit" class="accordion-collapse collapse" data-bs-parent="#calculatorAccordion">
+            <div class="accordion-body bg-white">
+              <app-unit-converter></app-unit-converter>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Column -->
+    <aside class="col-md-3 d-flex flex-column">
+      <div class="card border-info shadow-sm h-100">
+        <div class="card-header bg-info text-white">
+          <i class="bi bi-info-circle me-2"></i> Documentation
+        </div>
+        <div class="card-body bg-light">
+          <p class="card-text">{{ explanationText }}</p>
+        </div>
+      </div>
+    </aside>
   </div>
 </div>

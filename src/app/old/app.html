@@ -1,0 +1,65 @@
+<div class="container-fluid mt-4">
+  <header class="text-center mb-5">
+    <h1 class="display-4 text-primary">Traveling tools for when you need some fast calculations</h1>
+    <p class="lead text-muted">~Precision tools for the modern traveler~</p>
+  </header>
+
+  <div class="row">
+    <!-- Left Column: Navigation List -->
+    <aside class="col-md-3">
+      <div class="list-group shadow-sm">
+        <button class="list-group-item list-group-item-action" 
+                [class.active]="activeCalc === 'screen'" (click)="activeCalc = 'screen'">
+          <i class="bi bi-display me-2"></i> Screen Size
+        </button>
+        <button class="list-group-item list-group-item-action" 
+                [class.active]="activeCalc === 'unit'" (click)="activeCalc = 'unit'">
+          <i class="bi bi-rulers me-2"></i> Unit Converter
+        </button>
+        <button class="list-group-item list-group-item-action" 
+                [class.active]="activeCalc === 'angle'" (click)="activeCalc = 'angle'">
+          <i class="bi bi-compass me-2"></i> Angle Measurement
+        </button>
+        <button class="list-group-item list-group-item-action" 
+                [class.active]="activeCalc === 'currency'" (click)="activeCalc = 'currency'">
+          <i class="bi bi-currency-exchange me-2"></i> Currency Converter
+        </button>
+      </div>
+    </aside>
+
+    <!-- Middle Column: Accordion Selector -->
+    <main class="col-md-6">
+      <div class="accordion shadow" id="calculatorAccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-toggle-custom w-100 btn btn-dark py-3" type="button">
+              Active Tool: {{ getActiveTitle() }}
+            </button>
+          </h2>
+          <div class="accordion-collapse collapse show p-4 bg-white">
+            @switch (activeCalc) {
+              @case ('screen') { <app-screen-size></app-screen-size> }
+              @case ('unit') { <app-unit-converter></app-unit-converter> }
+              @case ('angle') { <div class="alert alert-info">Angle Calculator coming soon!</div> }
+              @case ('currency') { <div class="alert alert-info">Currency Converter coming soon!</div> }
+            }
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right Column: Info Panel -->
+    <aside class="col-md-3">
+      <div class="card border-info shadow-sm">
+        <div class="card-header bg-info text-white">
+          <i class="bi bi-info-circle me-2"></i> Documentation
+        </div>
+        <div class="card-body">
+          <p class="card-text">
+            {{ explanationText }}
+          </p>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>

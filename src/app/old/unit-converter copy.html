@@ -1,0 +1,34 @@
+<div class="converter-card">
+  <h3>Unit Converter</h3>
+
+  <div class="input-group">
+    <label>Category</label>
+    <select [(ngModel)]="selectedCategory" (change)="updateUnits()" title="Select Category">
+      <option *ngFor="let cat of categories" [value]="cat">{{ cat | titlecase }}</option>
+    </select>
+  </div>
+
+  <div class="conversion-grid">
+    <div class="column">
+    <input type="number" [(ngModel)]="inputValue" title="Input Value" (input)="convert()">      
+    <select [(ngModel)]="fromUnit" (change)="convert()" title="From Unit">
+        <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+      </select>
+    </div>
+
+    <div class="swap-icon"> ➡️ </div>
+
+    <div class="column">
+      <div class="result-display">{{ result }}</div>
+      <select [(ngModel)]="toUnit" (change)="convert()" title="To Unit">
+        <option *ngFor="let unit of units" [value]="unit">{{ unit }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="settings">
+    <label>Decimals: </label>
+    <input type="range" title="Output Value" min="0" max="10" [(ngModel)]="decimalLevel" (change)="convert()">
+    <span>{{ decimalLevel }}</span>
+  </div>
+</div>
