@@ -22,7 +22,8 @@ export class ScreenSize
   // Output record
   results = { x: 0, y: 0, diagonal: 0, ratio: 0 };
 
-  calculateXandY(): void {
+  calculateXandY(): void 
+  {
     const inchesConverter = this.diagInInches ? 2.54 : 1.0;
     
     // Java: getXAndYFromDiagAndDisp
@@ -37,4 +38,23 @@ export class ScreenSize
       ratio: this.disp
     };
   }
+
+  calculateXAndDiag(): void
+  {
+    const inchesConverter = this.diagInInches ? 2.54 : 1.0;
+    
+    // Java: getXAndDiagFromYAndDisp
+    const x = this.disp * this.diag;
+    const diag = Math.sqrt((x * x) + (this.diag * this.diag));
+  }
+
+    calculateXAndDisp(): void
+    {
+      const inchesConverter = this.diagInInches ? 2.54 : 1.0;
+    }
+
+    calculateDiagAndDisp(): void
+    {
+      const inchesConverter = this.diagInInches ? 2.54 : 1.0;
+    }
 }
