@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UnitConverter } from './components/unit-converter/unit-converter';
 import { ScreenSize } from './components/screen-size/screen-size';
+import { PasswordGenerator } from './components/password-generator/password-generator';
 
 @Component
 (
@@ -12,7 +13,8 @@ import { ScreenSize } from './components/screen-size/screen-size';
       [
         CommonModule, 
         UnitConverter, 
-        ScreenSize
+        ScreenSize,
+        PasswordGenerator
       ],
     templateUrl: './app.html',
     styleUrl: './app.scss'
@@ -30,6 +32,7 @@ export class App
       {
         'screen': 'Screen Size Calculator',
         'unit': 'Unit Converter',
+        'password': 'Password Generator',
         'angle': 'Angle Measurement',
         'currency': 'Currency Converter'
       };

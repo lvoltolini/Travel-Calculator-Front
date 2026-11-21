@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./screen-size.scss']
   }
 )
+
 export class ScreenSize 
 {
   // Input variables
@@ -22,55 +23,31 @@ export class ScreenSize
   disp: number = 1.7777; // 16:9
   width: number = 0;
   height: number = 0;
+  results: { x: number; y: number; diagonal: number; disp: number } = { x: 0, y: 0, diagonal: 0, disp: 0 };
 
-<<<<<<< HEAD
-  calculateXandY(): void 
-  {
-    const inchesConverter = this.diagInInches ? 2.54 : 1.0;
-=======
-  // Output record
-  results = { x: 0, y: 0, diagonal: 0, disp: 0 };
-  get inchesConverter() { return this.diagInInches ? 2.54 : 1.0; }
-
-  // calculateXandY(): void 
-  // {
-  //   const inchesConverter = this.diagInInches ? 2.54 : 1.0;
->>>>>>> de1dc7eddd4909b09a9d52e76111eca83bd81059
-    
-  //   // Java: getXAndYFromDiagAndDisp
-  //   const y = this.diag / (Math.sqrt(1 + (this.disp * this.disp)));
-  //   const x = y * this.disp;
-
-  //   this.results = 
-  //   {
-  //     x: Number((x * inchesConverter).toFixed(2)),
-  //     y: Number((y * inchesConverter).toFixed(2)),
-  //     diagonal: this.diag,
-  //     disp: this.disp
-  //   };
-  // }
+  private get diagInInchesMultiplier(): number { return this.diagInInches ? 2.54 : 1; }
 
   // Calcualte From:
   
   calculateFromDiagDisp(): void 
-  {
+  { // y = (diag)/sqrt(1 + disp^2); x = y * disp
     const y = this.diag / (Math.sqrt(1 + (this.disp * this.disp)));
     const x = y * this.disp;
-    this.updateResults(x * this.inchesConverter, y * this.inchesConverter, this.diag, this.disp);
+    this.updateResults(x * this.diagInInchesMultiplier, y * this.diagInInchesMultiplier, this.diag, this.disp);
   }
 
   calculateFromXY(): void 
-  {
+  { // diag = sqrt(x^2 + y^2)/inches; disp = x/y
     if (this.height === 0) return;
     const disp = this.width / this.height;
-    const diagonal = Math.sqrt(Math.pow(this.width, 2) + Math.pow(this.height, 2)) / this.inchesConverter;
-    this.updateResults(this.width, this.height, diagonal, disp);
+    const diag = Math.sqrt(Math.pow(this.width, 2) + Math.pow(this.height, 2)) / this.diagInInchesMultiplier;
+    this.updateResults(this.width, this.height, diag, disp);
   }
 
   calculateFromXDiag(): void 
-  {
+  { // y = sqrt((diag*inches)^2 - x^2); disp = x/y
     const xInBase = this.width;
-    const diagInBase = this.diag * this.inchesConverter;
+    const diagInBase = this.diag * this.diagInInchesMultiplier;
     if (diagInBase <= xInBase) return;
 
     const y = Math.sqrt(Math.pow(diagInBase, 2) - Math.pow(xInBase, 2));
@@ -79,10 +56,10 @@ export class ScreenSize
   }
 
   calculateFromXDisp(): void 
-  {
+  { // y = x/disp; diag = sqrt(x^2 + y^2)/inches
     if (this.disp === 0) return;
     const y = this.width / this.disp;
-    const diagonal = Math.sqrt(Math.pow(this.width, 2) + Math.pow(y, 2)) / this.inchesConverter;
+    const diagonal = Math.sqrt(Math.pow(this.width, 2) + Math.pow(y, 2)) / this.diagInInchesMultiplier;
     this.updateResults(this.width, y, diagonal, this.disp);
   }
 
@@ -97,26 +74,4 @@ export class ScreenSize
     };
   }
 
-<<<<<<< HEAD
-  calculateXAndDiag(): void
-  {
-    const inchesConverter = this.diagInInches ? 2.54 : 1.0;
-    
-    // Java: getXAndDiagFromYAndDisp
-    const x = this.disp * this.diag;
-    const diag = Math.sqrt((x * x) + (this.diag * this.diag));
-  }
-
-    calculateXAndDisp(): void
-    {
-      const inchesConverter = this.diagInInches ? 2.54 : 1.0;
-    }
-
-    calculateDiagAndDisp(): void
-    {
-      const inchesConverter = this.diagInInches ? 2.54 : 1.0;
-    }
-=======
-
->>>>>>> de1dc7eddd4909b09a9d52e76111eca83bd81059
 }
