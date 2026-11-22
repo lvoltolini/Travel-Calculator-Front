@@ -147,7 +147,7 @@ git push origin main
    - Builds Angular app with `npm run build`
    - Creates optimized production files
 4. ✅ Workflow runs the deploy job:
-   - Uploads built files to `gh-pages` branch
+   - Deploys the uploaded Pages artifact
    - GitHub Pages serves the app
 5. ✅ App is live at: https://lvoltolini.github.io/Travel-Calculator-Front/
 

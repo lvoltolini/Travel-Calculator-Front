@@ -31,10 +31,8 @@
 - [ ] Opened repository: https://github.com/lvoltolini/Travel-Calculator-Front
 - [ ] Navigated to Settings
 - [ ] Navigated to Pages (left sidebar)
-- [ ] Set Source to "Deploy from a branch"
-- [ ] Selected Branch: `gh-pages`
-- [ ] Selected Folder: `/root`
-- [ ] Clicked Save
+- [ ] Set Source to "GitHub Actions"
+- [ ] If the `github-pages` environment has deployment branch rules, allowed the deployment branch
 - [ ] Confirmed GitHub Pages is enabled
 
 ### Step 2: Commit Changes ✓

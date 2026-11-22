@@ -4,7 +4,7 @@
 
 ### Step 1: Enable GitHub Pages (One-Time)
 ```
-GitHub → Settings → Pages → Source: "Deploy from a branch" → Branch: "gh-pages" → Save
+GitHub → Settings → Pages → Build and deployment → Source: "GitHub Actions"
 ```
 
 ### Step 2: Push Your Code

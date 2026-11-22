@@ -58,7 +58,7 @@ Your Angular Travel Calculator project has been fully configured for GitHub Page
   2. Sets up Node.js 20
   3. Installs npm dependencies
   4. Builds Angular app
-  5. Deploys to `gh-pages` branch
+  5. Deploys the Pages artifact
   6. GitHub Pages serves the app
 
 **3. App Integration**
@@ -147,9 +147,7 @@ Status: ✅ Success
 ```bash
 # 1. Enable GitHub Pages
 # - Go to: GitHub Settings → Pages
-# - Source: "Deploy from a branch"
-# - Branch: "gh-pages"
-# - Save
+# - Source: "GitHub Actions"
 
 # 2. Push your code
 git add .
@@ -191,7 +189,7 @@ GitHub Actions Triggered
 ├─ Setup Node.js 20
 ├─ npm install
 ├─ npm run build
-└─ Deploy to gh-pages
+└─ Deploy the Pages artifact
         ↓
 GitHub Pages Updated
         ↓
@@ -351,7 +349,7 @@ Main Index:        src/index.html
 
 ### GitHub Pages
 - Free static website hosting by GitHub
-- Serves from `gh-pages` branch automatically
+- Serves the artifact deployed by GitHub Actions
 - HTTPS enabled by default
 - Perfect for Angular/React/Vue apps
 

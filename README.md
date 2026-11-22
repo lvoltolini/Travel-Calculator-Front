@@ -41,9 +41,10 @@ This project is configured to automatically deploy to GitHub Pages whenever you 
 
 1. **Enable GitHub Pages** in your repository settings:
    - Go to Settings → Pages
-   - Select "Deploy from a branch"
-   - Choose the branch: `gh-pages`
-   - Click Save
+   - Under Build and deployment → Source, select "GitHub Actions"
+   - If the `github-pages` environment has deployment branch rules, allow `main` or `master` as appropriate
+
+   If a previous deployment failed with "Deployments are only allowed from gh-pages", rerun the failed workflow after changing the source.
 
 2. **Push to trigger deployment**:
    ```bash
@@ -78,7 +79,7 @@ git push origin main
 The GitHub Actions workflow will automatically:
 1. ✅ Install dependencies
 2. ✅ Build the project
-3. ✅ Deploy to `gh-pages` branch
+3. ✅ Deploy the artifact to GitHub Pages
 4. ✅ Update your live GitHub Pages site
 
 ### How GitHub Actions Deployment Works:
@@ -86,7 +87,7 @@ The GitHub Actions workflow will automatically:
 The `.github/workflows/deploy.yml` file:
 - **Triggers** on every push to `main` or `master`
 - **Builds** the Angular app with `npm run build`
-- **Uploads** the compiled files to the `gh-pages` branch
+- **Uploads** the compiled files as a Pages artifact
 - **Deploys** automatically to GitHub Pages
 
 You don't need to do anything manually - just push your code!
