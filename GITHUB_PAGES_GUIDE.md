@@ -27,9 +27,10 @@ Your Angular Travel Calculator app is now configured for automatic deployment to
 2. Click **Settings** (top right)
 3. Click **Pages** in the left sidebar
 4. Under "Build and deployment":
-   - **Source**: Select "Deploy from a branch"
-   - **Branch**: Select `gh-pages` and `/root`
-   - Click **Save**
+   - **Source**: Select "GitHub Actions"
+5. If the `github-pages` environment has deployment branch rules, allow the branch used for deployment (`main` or `master`).
+
+If a previous deployment failed with "Deployments are only allowed from gh-pages", rerun the failed workflow after changing the source.
 
 ### Step 2: Commit and Push Changes
 
@@ -151,7 +152,7 @@ GitHub Actions Triggered
         ↓
 ├─ npm install (dependencies)
 ├─ npm run build (create app)
-└─ Deploy to gh-pages branch
+└─ Upload and deploy the Pages artifact
         ↓
 GitHub Pages Updated
         ↓

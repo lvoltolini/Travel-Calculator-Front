@@ -10,20 +10,14 @@
 3. Click: "Pages" (left sidebar)
 4. Find: "Build and deployment" section
 5. Set:
-   - Source: "Deploy from a branch"
-   - Branch: "gh-pages"
-   - Folder: "/root"
-6. Click: "Save"
+   - Source: "GitHub Actions"
 ```
 
 **What it looks like:**
 ```
 Settings > Pages
 ├─ Build and deployment
-│  ├─ Source: Deploy from a branch ✓
-│  ├─ Branch: gh-pages ✓
-│  └─ Folder: /root ✓
-└─ Save button
+└─ Source: GitHub Actions ✓
 ```
 
 ### Step 2️⃣: Commit Your Changes
@@ -107,8 +101,8 @@ Your Code Changes
         ↓
    npm build
         ↓
-    Deploy to
-   gh-pages branch
+    Deploy the
+   Pages artifact
         ↓
   GitHub Pages
    Updated!

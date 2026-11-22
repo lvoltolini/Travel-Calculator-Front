@@ -59,9 +59,7 @@
 ```bash
 # 1. Enable GitHub Pages
 # Go to: GitHub → Settings → Pages
-# Source: "Deploy from a branch"
-# Branch: "gh-pages"
-# Click Save
+# Source: "GitHub Actions"
 
 # 2. Commit and push
 git add .
